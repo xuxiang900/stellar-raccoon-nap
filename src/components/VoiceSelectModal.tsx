@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Check, X, Play } from "lucide-react";
 
 export interface Voice {
@@ -103,6 +103,20 @@ const EXTRA_JP_VOICES: Voice[] = [
   },
 ];
 
+// 全量语种列表（可根据实际需求扩展）
+const ALL_LANGUAGES = [
+  "English",
+  "Japanese",
+  "Chinese",
+  "Korean",
+  "French",
+  "German",
+  "Spanish",
+  "Italian",
+  "Russian",
+  "Portuguese",
+];
+
 export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }: VoiceSelectModalProps) {
   const [search, setSearch] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -125,8 +139,18 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
     return voices;
   }, [voices]);
 
-  // 提取唯一选项
-  const languageOptions = useMemo(() => Array.from(new Set(allVoices.map(v => v.language))).sort(), [allVoices]);
+  // 侧边栏传入 voices 只有一个语种时，自动选中该语种
+  useEffect(() => {
+    if (!selectedLanguage) {
+      const langs = Array.from(new Set(voices.map(v => v.language)));
+      if (langs.length === 1) {
+        setSelectedLanguage(langs[0]);
+      }
+    }
+    // eslint-disable-next-line
+  }, [voices]);
+
+  // 其余选项
   const genderOptions = ["Male", "Female"] as const;
   const ageOptions = useMemo(() => Array.from(new Set(allVoices.map(v => v.age))).sort(), [allVoices]);
   const tagOptions = useMemo(() => Array.from(new Set(allVoices.flatMap(v => v.tags))).sort(), [allVoices]);
@@ -180,7 +204,7 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
               <div>
                 <div className="text-xs font-semibold text-gray-500 mb-1">语言</div>
                 <div className="flex flex-wrap gap-2">
-                  {languageOptions.map(lang => (
+                  {ALL_LANGUAGES.map(lang => (
                     <button
                       key={lang}
                       type="button"
