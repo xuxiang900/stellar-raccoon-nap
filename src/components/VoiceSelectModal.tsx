@@ -103,20 +103,6 @@ const EXTRA_JP_VOICES: Voice[] = [
   },
 ];
 
-// 全量语种列表（可根据实际需求扩展）
-const ALL_LANGUAGES = [
-  "English",
-  "Japanese",
-  "Chinese",
-  "Korean",
-  "French",
-  "German",
-  "Spanish",
-  "Italian",
-  "Russian",
-  "Portuguese",
-];
-
 export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }: VoiceSelectModalProps) {
   const [search, setSearch] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -138,6 +124,12 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
     }
     return voices;
   }, [voices]);
+
+  // 只显示当前 voices 里的语种（去重），与右侧参数设置区保持一致
+  const languageOptions = useMemo(
+    () => Array.from(new Set(allVoices.map(v => v.language))),
+    [allVoices]
+  );
 
   // 侧边栏传入 voices 只有一个语种时，自动选中该语种
   useEffect(() => {
@@ -204,7 +196,7 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
               <div>
                 <div className="text-xs font-semibold text-gray-500 mb-1">语言</div>
                 <div className="flex flex-wrap gap-2">
-                  {ALL_LANGUAGES.map(lang => (
+                  {languageOptions.map(lang => (
                     <button
                       key={lang}
                       type="button"
