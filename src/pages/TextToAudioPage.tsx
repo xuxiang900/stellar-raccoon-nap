@@ -3,23 +3,45 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Pause, Play, Loader2 } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Pause, Play, Loader2, User, User2, Check } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-const EN_VOICES = Array.from({ length: 15 }, (_, i) => ({
-  id: `en${i + 1}`,
-  name: `English Voice ${i + 1}`,
-  gender: i % 2 === 0 ? "Male" : "Female",
-  avatar: "",
-}));
-const JP_VOICES = Array.from({ length: 15 }, (_, i) => ({
-  id: `jp${i + 1}`,
-  name: `Japanese Voice ${i + 1}`,
-  gender: i % 2 === 0 ? "Male" : "Female",
-  avatar: "",
-}));
+const EN_VOICES = [
+  { id: "en1", name: "Oliver", gender: "Male" },
+  { id: "en2", name: "Sophia", gender: "Female" },
+  { id: "en3", name: "Liam", gender: "Male" },
+  { id: "en4", name: "Emma", gender: "Female" },
+  { id: "en5", name: "Noah", gender: "Male" },
+  { id: "en6", name: "Ava", gender: "Female" },
+  { id: "en7", name: "Elijah", gender: "Male" },
+  { id: "en8", name: "Mia", gender: "Female" },
+  { id: "en9", name: "James", gender: "Male" },
+  { id: "en10", name: "Charlotte", gender: "Female" },
+  { id: "en11", name: "Benjamin", gender: "Male" },
+  { id: "en12", name: "Amelia", gender: "Female" },
+  { id: "en13", name: "Lucas", gender: "Male" },
+  { id: "en14", name: "Harper", gender: "Female" },
+  { id: "en15", name: "Henry", gender: "Male" },
+];
+const JP_VOICES = [
+  { id: "jp1", name: "Sora", gender: "Male" },
+  { id: "jp2", name: "Yui", gender: "Female" },
+  { id: "jp3", name: "Haruto", gender: "Male" },
+  { id: "jp4", name: "Hina", gender: "Female" },
+  { id: "jp5", name: "Yuto", gender: "Male" },
+  { id: "jp6", name: "Rin", gender: "Female" },
+  { id: "jp7", name: "Kaito", gender: "Male" },
+  { id: "jp8", name: "Saki", gender: "Female" },
+  { id: "jp9", name: "Ren", gender: "Male" },
+  { id: "jp10", name: "Mio", gender: "Female" },
+  { id: "jp11", name: "Daiki", gender: "Male" },
+  { id: "jp12", name: "Yuna", gender: "Female" },
+  { id: "jp13", name: "Takumi", gender: "Male" },
+  { id: "jp14", name: "Aoi", gender: "Female" },
+  { id: "jp15", name: "Kota", gender: "Male" },
+];
 
 const loudnessOptions = [
   { value: "loud", label: "Loud" },
@@ -40,8 +62,10 @@ export default function TextToAudioPage() {
   const [loudness, setLoudness] = useState("moderate");
   const [loading, setLoading] = useState(false);
   const [canPlay, setCanPlay] = useState(false);
+  const [voiceDialogOpen, setVoiceDialogOpen] = useState(false);
 
   const voices = useMemo(() => (lang === "en" ? EN_VOICES : JP_VOICES), [lang]);
+  const selectedVoice = voices.find(v => v.id === voice);
 
   const charCount = text.length;
 
@@ -92,32 +116,70 @@ export default function TextToAudioPage() {
               </SelectContent>
             </Select>
           </div>
-          {/* 声音选择 */}
+          {/* 声音选择（弹窗卡片） */}
           <div className="mb-4">
             <label className="block font-semibold mb-1">声音</label>
-            <ScrollArea className="h-32 rounded border">
-              <ul>
-                {voices.map(v => (
-                  <li key={v.id}>
+            <Button
+              variant="outline"
+              className="w-full flex justify-between items-center"
+              onClick={() => setVoiceDialogOpen(true)}
+            >
+              <div className="flex items-center">
+                {selectedVoice?.gender === "Male" ? (
+                  <User className="w-5 h-5 mr-2 text-blue-500" />
+                ) : (
+                  <User2 className="w-5 h-5 mr-2 text-pink-500" />
+                )}
+                <span>{selectedVoice?.name}</span>
+                <span className="ml-2 text-xs text-gray-400">{selectedVoice?.gender === "Male" ? "男" : "女"}</span>
+              </div>
+              <span className="text-xs text-gray-400">点击选择</span>
+            </Button>
+            <Dialog open={voiceDialogOpen} onOpenChange={setVoiceDialogOpen}>
+              <DialogContent className="max-w-3xl">
+                <DialogHeader>
+                  <DialogTitle>选择声音</DialogTitle>
+                </DialogHeader>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
+                  {voices.map(v => (
                     <button
+                      key={v.id}
                       className={cn(
-                        "flex items-center w-full px-2 py-1 rounded hover:bg-blue-50 transition",
-                        voice === v.id && "bg-blue-100"
+                        "group relative rounded-xl border p-4 flex flex-col items-center transition focus:outline-none",
+                        voice === v.id
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50"
                       )}
-                      onClick={() => setVoice(v.id)}
+                      onClick={() => {
+                        setVoice(v.id);
+                        setVoiceDialogOpen(false);
+                      }}
+                      type="button"
                     >
-                      <Avatar className="w-7 h-7 mr-2">
-                        <AvatarFallback>
-                          {v.gender === "Male" ? "M" : "F"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm">{v.name}</span>
-                      <span className="ml-2 text-xs text-gray-400">{v.gender}</span>
+                      <div className="mb-2">
+                        {v.gender === "Male" ? (
+                          <User className="w-8 h-8 text-blue-500" />
+                        ) : (
+                          <User2 className="w-8 h-8 text-pink-500" />
+                        )}
+                      </div>
+                      <div className="font-semibold">{v.name}</div>
+                      <div className="text-xs text-gray-500 mt-1">{v.gender === "Male" ? "男" : "女"}</div>
+                      {voice === v.id && (
+                        <span className="absolute top-2 right-2 text-blue-500">
+                          <Check className="w-5 h-5" />
+                        </span>
+                      )}
                     </button>
-                  </li>
-                ))}
-              </ul>
-            </ScrollArea>
+                  ))}
+                </div>
+                <DialogClose asChild>
+                  <Button className="mt-6 w-full" variant="secondary">
+                    关闭
+                  </Button>
+                </DialogClose>
+              </DialogContent>
+            </Dialog>
           </div>
           {/* 表现力 */}
           <div className="mb-4">
