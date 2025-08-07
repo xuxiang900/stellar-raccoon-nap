@@ -36,6 +36,73 @@ const genderIcon = (gender: "Male" | "Female") =>
     </svg>
   );
 
+// 增加更多日语声音
+const EXTRA_JP_VOICES: Voice[] = [
+  {
+    id: "haruka",
+    name: "Haruka",
+    gender: "Female",
+    avatar: "https://randomuser.me/api/portraits/women/70.jpg",
+    age: "Young Adult",
+    language: "Japanese",
+    tags: ["Anime", "Energetic", "Cute"],
+  },
+  {
+    id: "kenta",
+    name: "Kenta",
+    gender: "Male",
+    avatar: "https://randomuser.me/api/portraits/men/36.jpg",
+    age: "Teenager",
+    language: "Japanese",
+    tags: ["Anime", "Youthful", "Bright"],
+  },
+  {
+    id: "miyu",
+    name: "Miyu",
+    gender: "Female",
+    avatar: "https://randomuser.me/api/portraits/women/71.jpg",
+    age: "Child",
+    language: "Japanese",
+    tags: ["Child", "Cute", "Narration"],
+  },
+  {
+    id: "ryota",
+    name: "Ryota",
+    gender: "Male",
+    avatar: "https://randomuser.me/api/portraits/men/37.jpg",
+    age: "Adult",
+    language: "Japanese",
+    tags: ["Professional", "Calm", "Audiobook"],
+  },
+  {
+    id: "yoshiko",
+    name: "Yoshiko",
+    gender: "Female",
+    avatar: "https://randomuser.me/api/portraits/women/72.jpg",
+    age: "Senior",
+    language: "Japanese",
+    tags: ["Senior", "Warm", "Storytelling"],
+  },
+  {
+    id: "taro",
+    name: "Taro",
+    gender: "Male",
+    avatar: "https://randomuser.me/api/portraits/men/38.jpg",
+    age: "Middle-Aged",
+    language: "Japanese",
+    tags: ["News", "Speech", "Deep"],
+  },
+  {
+    id: "ayumi",
+    name: "Ayumi",
+    gender: "Female",
+    avatar: "https://randomuser.me/api/portraits/women/73.jpg",
+    age: "Adult",
+    language: "Japanese",
+    tags: ["Narration", "Calm", "Audiobook"],
+  },
+];
+
 export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }: VoiceSelectModalProps) {
   const [search, setSearch] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -43,14 +110,29 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
   const [selectedAge, setSelectedAge] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+  // 合并日语声音
+  const allVoices = useMemo(() => {
+    const hasJapanese = voices.some(v => v.language === "Japanese");
+    if (hasJapanese) {
+      // 只在有日语时合并
+      return [
+        ...voices,
+        ...EXTRA_JP_VOICES.filter(
+          extra => !voices.some(v => v.id === extra.id)
+        ),
+      ];
+    }
+    return voices;
+  }, [voices]);
+
   // 提取唯一选项
-  const languageOptions = useMemo(() => Array.from(new Set(voices.map(v => v.language))).sort(), [voices]);
+  const languageOptions = useMemo(() => Array.from(new Set(allVoices.map(v => v.language))).sort(), [allVoices]);
   const genderOptions = ["Male", "Female"] as const;
-  const ageOptions = useMemo(() => Array.from(new Set(voices.map(v => v.age))).sort(), [voices]);
-  const tagOptions = useMemo(() => Array.from(new Set(voices.flatMap(v => v.tags))).sort(), [voices]);
+  const ageOptions = useMemo(() => Array.from(new Set(allVoices.map(v => v.age))).sort(), [allVoices]);
+  const tagOptions = useMemo(() => Array.from(new Set(allVoices.flatMap(v => v.tags))).sort(), [allVoices]);
 
   // 过滤逻辑
-  const filtered = voices.filter(v => {
+  const filtered = allVoices.filter(v => {
     if (search && !(
       v.name.toLowerCase().includes(search.toLowerCase()) ||
       v.language.toLowerCase().includes(search.toLowerCase()) ||
