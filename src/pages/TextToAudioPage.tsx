@@ -161,9 +161,9 @@ export default function TextToAudioPage() {
         </div>
       </div>
       {/* 右侧参数配置区 */}
-      <div className="flex flex-col w-1/3 min-w-64 bg-white rounded-xl shadow p-6 relative h-full">
+      <div className="flex flex-col w-1/3 min-w-64 bg-white rounded-xl shadow relative h-full">
         {/* 内容区可滚动，底部按钮不遮挡 */}
-        <div className="flex-1 overflow-auto pb-24">
+        <div className="flex-1 overflow-auto pb-24 p-6">
           {/* 语种选择 */}
           <div className="mb-4">
             <label className="block font-semibold mb-1">语种</label>
