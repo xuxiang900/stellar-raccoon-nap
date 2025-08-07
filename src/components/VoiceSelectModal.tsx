@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -50,11 +50,11 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl w-full p-0">
         <div className="flex flex-col h-[600px]">
-          {/* 优化后的Header */}
-          <div className="flex items-center justify-between p-6 border-b relative">
+          {/* 降低高度后的Header，只保留一个关闭按钮 */}
+          <div className="flex items-center justify-between px-4 py-2 border-b relative">
             <DialogTitle className="text-lg font-semibold">Select Voice</DialogTitle>
             <DialogClose asChild>
-              <Button variant="ghost" size="icon" className="ml-2">
+              <Button variant="ghost" size="icon">
                 <X className="w-5 h-5" />
               </Button>
             </DialogClose>
