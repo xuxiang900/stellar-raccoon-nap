@@ -71,7 +71,7 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
             </div>
             {/* 右侧卡片区 */}
             <div className="flex-1 overflow-auto p-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
                 {filtered.map(v => (
                   <button
                     key={v.id}
