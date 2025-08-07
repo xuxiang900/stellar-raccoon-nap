@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Check, X, Play } from "lucide-react";
 
 export interface Voice {
@@ -38,13 +38,39 @@ const genderIcon = (gender: "Male" | "Female") =>
 
 export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }: VoiceSelectModalProps) {
   const [search, setSearch] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [selectedGender, setSelectedGender] = useState<"Male" | "Female" | null>(null);
+  const [selectedAge, setSelectedAge] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const filtered = voices.filter(
-    v =>
+  // 提取唯一选项
+  const languageOptions = useMemo(() => Array.from(new Set(voices.map(v => v.language))).sort(), [voices]);
+  const genderOptions = ["Male", "Female"] as const;
+  const ageOptions = useMemo(() => Array.from(new Set(voices.map(v => v.age))).sort(), [voices]);
+  const tagOptions = useMemo(() => Array.from(new Set(voices.flatMap(v => v.tags))).sort(), [voices]);
+
+  // 过滤逻辑
+  const filtered = voices.filter(v => {
+    if (search && !(
       v.name.toLowerCase().includes(search.toLowerCase()) ||
       v.language.toLowerCase().includes(search.toLowerCase()) ||
       v.tags.some(tag => tag.toLowerCase().includes(search.toLowerCase()))
-  );
+    )) {
+      return false;
+    }
+    if (selectedLanguage && v.language !== selectedLanguage) return false;
+    if (selectedGender && v.gender !== selectedGender) return false;
+    if (selectedAge && v.age !== selectedAge) return false;
+    if (selectedTags.length > 0 && !selectedTags.every(tag => v.tags.includes(tag))) return false;
+    return true;
+  });
+
+  // 选项切换
+  const handleTagToggle = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,7 +94,90 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
                 onChange={e => setSearch(e.target.value)}
                 className="mb-2"
               />
-              {/* 可扩展：语言、性别、标签筛选 */}
+              {/* 语言筛选 */}
+              <div>
+                <div className="text-xs font-semibold text-gray-500 mb-1">语言</div>
+                <div className="flex flex-wrap gap-2">
+                  {languageOptions.map(lang => (
+                    <button
+                      key={lang}
+                      type="button"
+                      className={cn(
+                        "px-2 py-0.5 rounded text-xs border",
+                        selectedLanguage === lang
+                          ? "bg-blue-100 border-blue-400 text-blue-700"
+                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-100"
+                      )}
+                      onClick={() => setSelectedLanguage(selectedLanguage === lang ? null : lang)}
+                    >
+                      {lang}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {/* 性别筛选 */}
+              <div>
+                <div className="text-xs font-semibold text-gray-500 mb-1">性别</div>
+                <div className="flex flex-wrap gap-2">
+                  {genderOptions.map(gender => (
+                    <button
+                      key={gender}
+                      type="button"
+                      className={cn(
+                        "px-2 py-0.5 rounded text-xs border",
+                        selectedGender === gender
+                          ? "bg-blue-100 border-blue-400 text-blue-700"
+                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-100"
+                      )}
+                      onClick={() => setSelectedGender(selectedGender === gender ? null : gender)}
+                    >
+                      {gender === "Male" ? "男" : "女"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {/* 年龄筛选 */}
+              <div>
+                <div className="text-xs font-semibold text-gray-500 mb-1">年龄</div>
+                <div className="flex flex-wrap gap-2">
+                  {ageOptions.map(age => (
+                    <button
+                      key={age}
+                      type="button"
+                      className={cn(
+                        "px-2 py-0.5 rounded text-xs border",
+                        selectedAge === age
+                          ? "bg-blue-100 border-blue-400 text-blue-700"
+                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-100"
+                      )}
+                      onClick={() => setSelectedAge(selectedAge === age ? null : age)}
+                    >
+                      {age}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {/* 标签筛选 */}
+              <div>
+                <div className="text-xs font-semibold text-gray-500 mb-1">标签</div>
+                <div className="flex flex-wrap gap-2">
+                  {tagOptions.map(tag => (
+                    <button
+                      key={tag}
+                      type="button"
+                      className={cn(
+                        "px-2 py-0.5 rounded text-xs border",
+                        selectedTags.includes(tag)
+                          ? "bg-blue-100 border-blue-400 text-blue-700"
+                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-100"
+                      )}
+                      onClick={() => handleTagToggle(tag)}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
             {/* 右侧卡片区 */}
             <div className="flex-1 overflow-auto p-6">
