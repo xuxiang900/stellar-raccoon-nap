@@ -76,7 +76,7 @@ export default function TextToAudioPage() {
         </div>
       </div>
       {/* 右侧参数配置区 */}
-      <div className="flex flex-col w-1/3 bg-white rounded-xl shadow p-6">
+      <div className="flex flex-col w-1/3 bg-white rounded-xl shadow p-6 relative">
         {/* 语种选择 */}
         <div className="mb-4">
           <label className="block font-semibold mb-1">语种</label>
@@ -200,22 +200,24 @@ export default function TextToAudioPage() {
             </Select>
           </div>
         </div>
-      </div>
-      {/* 底部操作栏 */}
-      <div className="absolute left-0 right-0 bottom-0 flex justify-end items-center bg-white border-t px-8 py-4 space-x-4">
-        <Button
-          onClick={handleConvert}
-          disabled={loading || !text}
-        >
-          {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-          Start Convert
-        </Button>
-        <Button
-          variant="outline"
-          disabled={!canPlay}
-        >
-          <Play className="w-4 h-4" />
-        </Button>
+        {/* 右侧底部操作栏 */}
+        <div className="absolute left-0 right-0 bottom-0 flex justify-end items-center bg-white border-t px-8 py-4 space-x-4 rounded-b-xl">
+          <Button
+            onClick={handleConvert}
+            disabled={loading || !text}
+          >
+            {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            Start Convert
+          </Button>
+          <Button
+            variant="outline"
+            disabled={!canPlay}
+          >
+            <Play className="w-4 h-4" />
+          </Button>
+        </div>
+        {/* 为了不被底部操作栏遮挡，预留空间 */}
+        <div className="h-20" />
       </div>
     </div>
   );
