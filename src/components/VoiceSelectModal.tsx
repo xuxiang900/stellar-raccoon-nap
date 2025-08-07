@@ -20,9 +20,7 @@ interface VoiceSelectModalProps {
   onOpenChange: (open: boolean) => void;
   voices: Voice[];
   value: string;
-  onChange: (id: string, language: string) => void;
-  languageOptions: string[]; // 参数设置区的语种列表
-  selectedLanguage: string;  // 参数设置区当前语种
+  onChange: (id: string) => void;
 }
 
 const genderIcon = (gender: "Male" | "Female") =>
@@ -105,31 +103,18 @@ const EXTRA_JP_VOICES: Voice[] = [
   },
 ];
 
-export function VoiceSelectModal({
-  open,
-  onOpenChange,
-  voices,
-  value,
-  onChange,
-  languageOptions,
-  selectedLanguage: externalSelectedLanguage,
-}: VoiceSelectModalProps) {
+export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }: VoiceSelectModalProps) {
   const [search, setSearch] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState<string>(externalSelectedLanguage);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [selectedGender, setSelectedGender] = useState<"Male" | "Female" | null>(null);
   const [selectedAge, setSelectedAge] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedVoiceId, setSelectedVoiceId] = useState<string>(value);
-
-  // 保持外部语言变化时同步
-  useEffect(() => {
-    setSelectedLanguage(externalSelectedLanguage);
-  }, [externalSelectedLanguage, open]);
 
   // 合并日语声音
   const allVoices = useMemo(() => {
     const hasJapanese = voices.some(v => v.language === "Japanese");
     if (hasJapanese) {
+      // 只在有日语时合并
       return [
         ...voices,
         ...EXTRA_JP_VOICES.filter(
@@ -138,6 +123,23 @@ export function VoiceSelectModal({
       ];
     }
     return voices;
+  }, [voices]);
+
+  // 只显示当前 voices 里的语种（去重），与右侧参数设置区保持一致
+  const languageOptions = useMemo(
+    () => Array.from(new Set(allVoices.map(v => v.language))),
+    [allVoices]
+  );
+
+  // 侧边栏传入 voices 只有一个语种时，自动选中该语种
+  useEffect(() => {
+    if (!selectedLanguage) {
+      const langs = Array.from(new Set(voices.map(v => v.language)));
+      if (langs.length === 1) {
+        setSelectedLanguage(langs[0]);
+      }
+    }
+    // eslint-disable-next-line
   }, [voices]);
 
   // 其余选项
@@ -168,23 +170,11 @@ export function VoiceSelectModal({
     );
   };
 
-  // 选择声音
-  const handleVoiceSelect = (id: string, lang: string) => {
-    setSelectedVoiceId(id);
-    setSelectedLanguage(lang);
-  };
-
-  // OK按钮
-  const handleOk = () => {
-    onChange(selectedVoiceId, selectedLanguage);
-    onOpenChange(false);
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl w-full p-0">
         <div className="flex flex-col h-[600px]">
-          {/* Header */}
+          {/* 降低高度后的Header，只保留一个关闭按钮 */}
           <div className="flex items-center justify-between px-4 py-2 border-b relative">
             <DialogTitle className="text-lg font-semibold">Select Voice</DialogTitle>
             <DialogClose asChild>
@@ -216,7 +206,7 @@ export function VoiceSelectModal({
                           ? "bg-blue-100 border-blue-400 text-blue-700"
                           : "bg-white border-gray-200 text-gray-700 hover:bg-gray-100"
                       )}
-                      onClick={() => setSelectedLanguage(selectedLanguage === lang ? "" : lang)}
+                      onClick={() => setSelectedLanguage(selectedLanguage === lang ? null : lang)}
                     >
                       {lang}
                     </button>
@@ -295,11 +285,11 @@ export function VoiceSelectModal({
                     key={v.id}
                     className={cn(
                       "group relative flex flex-col items-start p-4 rounded-xl border transition focus:outline-none",
-                      selectedVoiceId === v.id
+                      value === v.id
                         ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50"
                         : "border-gray-200 hover:border-blue-300"
                     )}
-                    onClick={() => handleVoiceSelect(v.id, v.language)}
+                    onClick={() => onChange(v.id)}
                     type="button"
                   >
                     <div className="flex items-center mb-2">
@@ -327,7 +317,7 @@ export function VoiceSelectModal({
                     <Button variant="ghost" size="icon" className="absolute right-4 top-4">
                       <Play className="w-5 h-5 text-blue-500" />
                     </Button>
-                    {selectedVoiceId === v.id && (
+                    {value === v.id && (
                       <Check className="absolute right-4 bottom-4 text-blue-500 w-5 h-5" />
                     )}
                   </button>
@@ -338,10 +328,10 @@ export function VoiceSelectModal({
               )}
             </div>
           </div>
-          {/* Footer */}
+          {/* 降低footer高度 */}
           <div className="flex justify-end gap-4 border-t px-4 py-2 bg-white">
             <DialogClose asChild>
-              <Button onClick={handleOk} disabled={!selectedVoiceId}>OK</Button>
+              <Button onClick={() => onOpenChange(false)}>OK</Button>
             </DialogClose>
           </div>
         </div>
