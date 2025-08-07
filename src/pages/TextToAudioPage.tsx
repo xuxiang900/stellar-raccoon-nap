@@ -76,7 +76,7 @@ export default function TextToAudioPage() {
         </div>
       </div>
       {/* 右侧参数配置区 */}
-      <div className="flex flex-col w-1/3 bg-white rounded-xl shadow p-6 relative h-full">
+      <div className="flex flex-col w-1/3 min-w-64 bg-white rounded-xl shadow p-6 relative h-full">
         {/* 内容区可滚动，底部按钮不遮挡 */}
         <div className="flex-1 overflow-auto pb-24">
           {/* 语种选择 */}
