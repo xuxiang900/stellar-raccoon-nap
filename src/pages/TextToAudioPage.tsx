@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Play, Loader2 } from "lucide-react";
+import { Play, Loader2, ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { VoiceSelectModal } from "@/components/VoiceSelectModal";
@@ -141,6 +141,20 @@ export default function TextToAudioPage() {
     }, 1500);
   };
 
+  // 性别图标
+  const genderIcon = (gender: "Male" | "Female") =>
+    gender === "Male" ? (
+      <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <circle cx="13" cy="13" r="5" />
+        <path d="M19 5v4m0-4h-4m4 0l-7 7" />
+      </svg>
+    ) : (
+      <svg className="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="5" />
+        <path d="M12 13v6m-3 0h6" />
+      </svg>
+    );
+
   return (
     <div className="flex flex-1 h-full relative">
       {/* 左侧输入内容区 */}
@@ -182,28 +196,20 @@ export default function TextToAudioPage() {
             <label className="block font-semibold mb-1">声音</label>
             <Button
               variant="outline"
-              className="w-full flex items-center justify-start gap-3"
+              className="w-full flex items-center justify-between gap-3"
               onClick={() => setVoiceModalOpen(true)}
             >
-              <img
-                src={selectedVoice.avatar}
-                alt={selectedVoice.name}
-                className="w-8 h-8 rounded-full object-cover border"
-                onError={e => ((e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(selectedVoice.name))}
-              />
-              <span className="font-medium">{selectedVoice.name}</span>
-              {selectedVoice.gender === "Male" ? (
-                <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <circle cx="13" cy="13" r="5" />
-                  <path d="M19 5v4m0-4h-4m4 0l-7 7" />
-                </svg>
-              ) : (
-                <svg className="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <circle cx="12" cy="8" r="5" />
-                  <path d="M12 13v6m-3 0h6" />
-                </svg>
-              )}
-              <span className="ml-2 text-xs text-gray-500">{selectedVoice.language} • {selectedVoice.age}</span>
+              <div className="flex items-center gap-3">
+                <img
+                  src={selectedVoice.avatar}
+                  alt={selectedVoice.name}
+                  className="w-8 h-8 rounded-full object-cover border"
+                  onError={e => ((e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(selectedVoice.name))}
+                />
+                <span className="font-medium">{selectedVoice.name}</span>
+                {genderIcon(selectedVoice.gender)}
+              </div>
+              <ChevronDown className="w-4 h-4 text-gray-400" />
             </Button>
             <VoiceSelectModal
               open={voiceModalOpen}
