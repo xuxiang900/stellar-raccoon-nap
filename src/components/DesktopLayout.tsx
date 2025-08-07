@@ -1,17 +1,20 @@
-import { ReactNode } from "react";
-import { LayoutDashboard, Menu } from "lucide-react";
+import { ReactNode, useState } from "react";
+import { Volume2, Menu } from "lucide-react";
+import TextToAudioPage from "@/pages/TextToAudioPage";
 
 interface DesktopLayoutProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 const menuItems = [
-  { icon: <LayoutDashboard className="w-5 h-5 mr-2" />, label: "仪表盘" },
-  { icon: <Menu className="w-5 h-5 mr-2" />, label: "菜单一" },
-  { icon: <Menu className="w-5 h-5 mr-2" />, label: "菜单二" },
+  { icon: <Volume2 className="w-5 h-5 mr-2" />, label: "Text to Audio", key: "text-to-audio" },
+  { icon: <Menu className="w-5 h-5 mr-2" />, label: "菜单一", key: "menu1" },
+  { icon: <Menu className="w-5 h-5 mr-2" />, label: "菜单二", key: "menu2" },
 ];
 
 export default function DesktopLayout({ children }: DesktopLayoutProps) {
+  const [selected, setSelected] = useState("text-to-audio");
+
   return (
     <div className="w-[1200px] h-[768px] bg-white rounded-2xl shadow-2xl flex overflow-hidden border mx-auto my-12">
       {/* 左侧侧边栏 */}
@@ -37,9 +40,16 @@ export default function DesktopLayout({ children }: DesktopLayoutProps) {
         {/* 主菜单 */}
         <nav className="flex-1 w-full">
           <ul className="space-y-2 px-4">
-            {menuItems.map((item, idx) => (
-              <li key={idx}>
-                <button className="flex items-center w-full px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-100 transition">
+            {menuItems.map((item) => (
+              <li key={item.key}>
+                <button
+                  className={`flex items-center w-full px-3 py-2 rounded-lg transition ${
+                    selected === item.key
+                      ? "bg-blue-100 text-blue-700 font-semibold"
+                      : "text-gray-700 hover:bg-blue-50"
+                  }`}
+                  onClick={() => setSelected(item.key)}
+                >
                   {item.icon}
                   <span>{item.label}</span>
                 </button>
@@ -49,7 +59,9 @@ export default function DesktopLayout({ children }: DesktopLayoutProps) {
         </nav>
       </aside>
       {/* 右侧工作区 */}
-      <main className="flex-1 bg-gray-100 p-8 flex flex-col">{children}</main>
+      <main className="flex-1 bg-gray-100 p-8 flex flex-col">
+        {selected === "text-to-audio" ? <TextToAudioPage /> : children}
+      </main>
     </div>
   );
 }
