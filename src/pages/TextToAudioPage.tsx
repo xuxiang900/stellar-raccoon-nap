@@ -76,128 +76,131 @@ export default function TextToAudioPage() {
         </div>
       </div>
       {/* 右侧参数配置区 */}
-      <div className="flex flex-col w-1/3 bg-white rounded-xl shadow p-6 relative">
-        {/* 语种选择 */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">语种</label>
-          <Select value={lang} onValueChange={v => setLang(v as "en" | "jp")}>
-            <SelectTrigger>
-              <SelectValue placeholder="选择语种" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">英语</SelectItem>
-              <SelectItem value="jp">日语</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        {/* 声音选择 */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">声音</label>
-          <ScrollArea className="h-32 rounded border">
-            <ul>
-              {voices.map(v => (
-                <li key={v.id}>
-                  <button
-                    className={cn(
-                      "flex items-center w-full px-2 py-1 rounded hover:bg-blue-50 transition",
-                      voice === v.id && "bg-blue-100"
-                    )}
-                    onClick={() => setVoice(v.id)}
-                  >
-                    <Avatar className="w-7 h-7 mr-2">
-                      <AvatarFallback>
-                        {v.gender === "Male" ? "M" : "F"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm">{v.name}</span>
-                    <span className="ml-2 text-xs text-gray-400">{v.gender}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </ScrollArea>
-        </div>
-        {/* 表现力 */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">表现力 Expressive</label>
-          <div className="flex space-x-2">
-            {["high", "medium", "low"].map(level => (
-              <Button
-                key={level}
-                variant={expressive === level ? "default" : "outline"}
-                size="sm"
-                onClick={() => setExpressive(level)}
-              >
-                {level.charAt(0).toUpperCase() + level.slice(1)}
-              </Button>
-            ))}
-          </div>
-        </div>
-        {/* Silence */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Slience 静音 (ms)</label>
-          <div className="mb-2">
-            <span className="text-xs text-gray-500">Start Silence</span>
-            <Slider
-              min={0}
-              max={2000}
-              step={10}
-              value={startSilence}
-              onValueChange={setStartSilence}
-            />
-            <span className="text-xs text-gray-400 ml-2">{startSilence[0]}ms</span>
-          </div>
-          <div className="mb-2">
-            <span className="text-xs text-gray-500">Sentence Silence</span>
-            <Slider
-              min={0}
-              max={2000}
-              step={10}
-              value={sentenceSilence}
-              onValueChange={setSentenceSilence}
-            />
-            <span className="text-xs text-gray-400 ml-2">{sentenceSilence[0]}ms</span>
-          </div>
-          <div>
-            <span className="text-xs text-gray-500">Paragraph Silence</span>
-            <Slider
-              min={0}
-              max={2000}
-              step={10}
-              value={paragraphSilence}
-              onValueChange={setParagraphSilence}
-            />
-            <span className="text-xs text-gray-400 ml-2">{paragraphSilence[0]}ms</span>
-          </div>
-        </div>
-        {/* Prosody */}
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Prosody 韵律</label>
-          <div className="mb-2">
-            <span className="text-xs text-gray-500">Speed</span>
-            <Slider
-              min={0.5}
-              max={2.5}
-              step={0.05}
-              value={speed}
-              onValueChange={setSpeed}
-            />
-            <span className="text-xs text-gray-400 ml-2">{speed[0].toFixed(2)}x</span>
-          </div>
-          <div>
-            <span className="text-xs text-gray-500">Loudness</span>
-            <Select value={loudness} onValueChange={setLoudness}>
+      <div className="flex flex-col w-1/3 bg-white rounded-xl shadow p-6 relative h-full">
+        {/* 内容区可滚动，底部按钮不遮挡 */}
+        <div className="flex-1 overflow-auto pb-24">
+          {/* 语种选择 */}
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">语种</label>
+            <Select value={lang} onValueChange={v => setLang(v as "en" | "jp")}>
               <SelectTrigger>
-                <SelectValue placeholder="选择响度" />
+                <SelectValue placeholder="选择语种" />
               </SelectTrigger>
               <SelectContent>
-                {loudnessOptions.map(opt => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="en">英语</SelectItem>
+                <SelectItem value="jp">日语</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          {/* 声音选择 */}
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">声音</label>
+            <ScrollArea className="h-32 rounded border">
+              <ul>
+                {voices.map(v => (
+                  <li key={v.id}>
+                    <button
+                      className={cn(
+                        "flex items-center w-full px-2 py-1 rounded hover:bg-blue-50 transition",
+                        voice === v.id && "bg-blue-100"
+                      )}
+                      onClick={() => setVoice(v.id)}
+                    >
+                      <Avatar className="w-7 h-7 mr-2">
+                        <AvatarFallback>
+                          {v.gender === "Male" ? "M" : "F"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">{v.name}</span>
+                      <span className="ml-2 text-xs text-gray-400">{v.gender}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+          </div>
+          {/* 表现力 */}
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">表现力 Expressive</label>
+            <div className="flex space-x-2">
+              {["high", "medium", "low"].map(level => (
+                <Button
+                  key={level}
+                  variant={expressive === level ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setExpressive(level)}
+                >
+                  {level.charAt(0).toUpperCase() + level.slice(1)}
+                </Button>
+              ))}
+            </div>
+          </div>
+          {/* Silence */}
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Slience 静音 (ms)</label>
+            <div className="mb-2">
+              <span className="text-xs text-gray-500">Start Silence</span>
+              <Slider
+                min={0}
+                max={2000}
+                step={10}
+                value={startSilence}
+                onValueChange={setStartSilence}
+              />
+              <span className="text-xs text-gray-400 ml-2">{startSilence[0]}ms</span>
+            </div>
+            <div className="mb-2">
+              <span className="text-xs text-gray-500">Sentence Silence</span>
+              <Slider
+                min={0}
+                max={2000}
+                step={10}
+                value={sentenceSilence}
+                onValueChange={setSentenceSilence}
+              />
+              <span className="text-xs text-gray-400 ml-2">{sentenceSilence[0]}ms</span>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">Paragraph Silence</span>
+              <Slider
+                min={0}
+                max={2000}
+                step={10}
+                value={paragraphSilence}
+                onValueChange={setParagraphSilence}
+              />
+              <span className="text-xs text-gray-400 ml-2">{paragraphSilence[0]}ms</span>
+            </div>
+          </div>
+          {/* Prosody */}
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Prosody 韵律</label>
+            <div className="mb-2">
+              <span className="text-xs text-gray-500">Speed</span>
+              <Slider
+                min={0.5}
+                max={2.5}
+                step={0.05}
+                value={speed}
+                onValueChange={setSpeed}
+              />
+              <span className="text-xs text-gray-400 ml-2">{speed[0].toFixed(2)}x</span>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">Loudness</span>
+              <Select value={loudness} onValueChange={setLoudness}>
+                <SelectTrigger>
+                  <SelectValue placeholder="选择响度" />
+                </SelectTrigger>
+                <SelectContent>
+                  {loudnessOptions.map(opt => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
         {/* 右侧底部操作栏 */}
@@ -216,8 +219,6 @@ export default function TextToAudioPage() {
             <Play className="w-4 h-4" />
           </Button>
         </div>
-        {/* 为了不被底部操作栏遮挡，预留空间 */}
-        <div className="h-20" />
       </div>
     </div>
   );
