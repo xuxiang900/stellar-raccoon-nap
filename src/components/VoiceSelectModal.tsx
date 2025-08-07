@@ -21,9 +21,6 @@ interface VoiceSelectModalProps {
   voices: Voice[];
   value: string;
   onChange: (id: string) => void;
-  languageOptions: string[]; // 参数设置区的语种列表
-  currentLanguage: string; // 参数设置区当前语种
-  onLanguageChange: (lang: string) => void; // 语种变更回调
 }
 
 const genderIcon = (gender: "Male" | "Female") =>
@@ -106,33 +103,18 @@ const EXTRA_JP_VOICES: Voice[] = [
   },
 ];
 
-export function VoiceSelectModal({
-  open,
-  onOpenChange,
-  voices,
-  value,
-  onChange,
-  languageOptions,
-  currentLanguage,
-  onLanguageChange,
-}: VoiceSelectModalProps) {
+export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }: VoiceSelectModalProps) {
   const [search, setSearch] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState<string>(currentLanguage);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [selectedGender, setSelectedGender] = useState<"Male" | "Female" | null>(null);
   const [selectedAge, setSelectedAge] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  // 弹窗打开时同步参数设置区的语种
-  useEffect(() => {
-    if (open) {
-      setSelectedLanguage(currentLanguage);
-    }
-  }, [open, currentLanguage]);
 
   // 合并日语声音
   const allVoices = useMemo(() => {
     const hasJapanese = voices.some(v => v.language === "Japanese");
     if (hasJapanese) {
+      // 只在有日语时合并
       return [
         ...voices,
         ...EXTRA_JP_VOICES.filter(
@@ -141,6 +123,23 @@ export function VoiceSelectModal({
       ];
     }
     return voices;
+  }, [voices]);
+
+  // 只显示当前 voices 里的语种（去重），与右侧参数设置区保持一致
+  const languageOptions = useMemo(
+    () => Array.from(new Set(allVoices.map(v => v.language))),
+    [allVoices]
+  );
+
+  // 侧边栏传入 voices 只有一个语种时，自动选中该语种
+  useEffect(() => {
+    if (!selectedLanguage) {
+      const langs = Array.from(new Set(voices.map(v => v.language)));
+      if (langs.length === 1) {
+        setSelectedLanguage(langs[0]);
+      }
+    }
+    // eslint-disable-next-line
   }, [voices]);
 
   // 其余选项
@@ -169,12 +168,6 @@ export function VoiceSelectModal({
     setSelectedTags(prev =>
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
-  };
-
-  // OK时同步语种
-  const handleOk = () => {
-    onLanguageChange(selectedLanguage);
-    onOpenChange(false);
   };
 
   return (
@@ -213,7 +206,7 @@ export function VoiceSelectModal({
                           ? "bg-blue-100 border-blue-400 text-blue-700"
                           : "bg-white border-gray-200 text-gray-700 hover:bg-gray-100"
                       )}
-                      onClick={() => setSelectedLanguage(selectedLanguage === lang ? "" : lang)}
+                      onClick={() => setSelectedLanguage(selectedLanguage === lang ? null : lang)}
                     >
                       {lang}
                     </button>
@@ -338,7 +331,7 @@ export function VoiceSelectModal({
           {/* 降低footer高度 */}
           <div className="flex justify-end gap-4 border-t px-4 py-2 bg-white">
             <DialogClose asChild>
-              <Button onClick={handleOk}>OK</Button>
+              <Button onClick={() => onOpenChange(false)}>OK</Button>
             </DialogClose>
           </div>
         </div>
