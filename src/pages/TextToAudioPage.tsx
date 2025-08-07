@@ -3,44 +3,175 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Pause, Play, Loader2, User, User2, Check } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Play, Loader2 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { VoiceSelectModal } from "@/components/VoiceSelectModal";
 
 const EN_VOICES = [
-  { id: "en1", name: "Oliver", gender: "Male" },
-  { id: "en2", name: "Sophia", gender: "Female" },
-  { id: "en3", name: "Liam", gender: "Male" },
-  { id: "en4", name: "Emma", gender: "Female" },
-  { id: "en5", name: "Noah", gender: "Male" },
-  { id: "en6", name: "Ava", gender: "Female" },
-  { id: "en7", name: "Elijah", gender: "Male" },
-  { id: "en8", name: "Mia", gender: "Female" },
-  { id: "en9", name: "James", gender: "Male" },
-  { id: "en10", name: "Charlotte", gender: "Female" },
-  { id: "en11", name: "Benjamin", gender: "Male" },
-  { id: "en12", name: "Amelia", gender: "Female" },
-  { id: "en13", name: "Lucas", gender: "Male" },
-  { id: "en14", name: "Harper", gender: "Female" },
-  { id: "en15", name: "Henry", gender: "Male" },
+  {
+    id: "amelia",
+    name: "Amelia",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    age: "Young Adult",
+    language: "English",
+    tags: ["Speech", "News", "Energetic"],
+  },
+  {
+    id: "benjamin",
+    name: "Benjamin",
+    gender: "Male" as const,
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    age: "Middle-Aged",
+    language: "English",
+    tags: ["Speech", "News", "British Accent"],
+  },
+  {
+    id: "charlotte",
+    name: "Charlotte",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/65.jpg",
+    age: "Adult",
+    language: "English",
+    tags: ["Audiobook", "Professional", "Calm"],
+  },
+  {
+    id: "chloe",
+    name: "Chloe",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/66.jpg",
+    age: "Adult",
+    language: "English",
+    tags: ["Audiobook", "Narration", "Energetic"],
+  },
+  {
+    id: "clara",
+    name: "Clara",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/67.jpg",
+    age: "Adult",
+    language: "English",
+    tags: ["Professional", "Calm", "British Accent"],
+  },
+  {
+    id: "daniel",
+    name: "Daniel",
+    gender: "Male" as const,
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
+    age: "Young Adult",
+   <dyad-problem-report summary="1 problems">
+<problem file="src/pages/TextToAudioPage.tsx" line="211" column="15" code="2322">Type '{ id: string; name: string; gender: string; avatar: string; age: string; language: string; tags: string[]; }[]' is not assignable to type 'Voice[]'.
+  Type '{ id: string; name: string; gender: string; avatar: string; age: string; language: string; tags: string[]; }' is not assignable to type 'Voice'.
+    Types of property 'gender' are incompatible.
+      Type 'string' is not assignable to type '&quot;Male&quot; | &quot;Female&quot;'.</problem>
+</dyad-problem-report>你只需要把 EN_VOICES 和 JP_VOICES 里的 gender 字段声明为 "Male" 或 "Female" 字面量类型（as const），这样就能通过类型检查。
+
+<dyad-write path="src/pages/TextToAudioPage.tsx" description="修复 Voice 类型 gender 字段类型不兼容的 TypeScript 错误">
+import { useState, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Play, Loader2 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { VoiceSelectModal } from "@/components/VoiceSelectModal";
+
+const EN_VOICES = [
+  {
+    id: "amelia",
+    name: "Amelia",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    age: "Young Adult",
+    language: "English",
+    tags: ["Speech", "News", "Energetic"],
+  },
+  {
+    id: "benjamin",
+    name: "Benjamin",
+    gender: "Male" as const,
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    age: "Middle-Aged",
+    language: "English",
+    tags: ["Speech", "News", "British Accent"],
+  },
+  {
+    id: "charlotte",
+    name: "Charlotte",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/65.jpg",
+    age: "Adult",
+    language: "English",
+    tags: ["Audiobook", "Professional", "Calm"],
+  },
+  {
+    id: "chloe",
+    name: "Chloe",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/66.jpg",
+    age: "Adult",
+    language: "English",
+    tags: ["Audiobook", "Narration", "Energetic"],
+  },
+  {
+    id: "clara",
+    name: "Clara",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/67.jpg",
+    age: "Adult",
+    language: "English",
+    tags: ["Professional", "Calm", "British Accent"],
+  },
+  {
+    id: "daniel",
+    name: "Daniel",
+    gender: "Male" as const,
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
+    age: "Young Adult",
+    language: "English",
+    tags: ["Speech", "Education", "Professional"],
+  },
 ];
+
 const JP_VOICES = [
-  { id: "jp1", name: "Sora", gender: "Male" },
-  { id: "jp2", name: "Yui", gender: "Female" },
-  { id: "jp3", name: "Haruto", gender: "Male" },
-  { id: "jp4", name: "Hina", gender: "Female" },
-  { id: "jp5", name: "Yuto", gender: "Male" },
-  { id: "jp6", name: "Rin", gender: "Female" },
-  { id: "jp7", name: "Kaito", gender: "Male" },
-  { id: "jp8", name: "Saki", gender: "Female" },
-  { id: "jp9", name: "Ren", gender: "Male" },
-  { id: "jp10", name: "Mio", gender: "Female" },
-  { id: "jp11", name: "Daiki", gender: "Male" },
-  { id: "jp12", name: "Yuna", gender: "Female" },
-  { id: "jp13", name: "Takumi", gender: "Male" },
-  { id: "jp14", name: "Aoi", gender: "Female" },
-  { id: "jp15", name: "Kota", gender: "Male" },
+  {
+    id: "sakura",
+    name: "Sakura",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    age: "Adult",
+    language: "Japanese",
+    tags: ["Audiobook", "Calm"],
+  },
+  {
+    id: "takashi",
+    name: "Takashi",
+    gender: "Male" as const,
+    avatar: "https://randomuser.me/api/portraits/men/34.jpg",
+    age: "Middle-Aged",
+    language: "Japanese",
+    tags: ["Speech", "News"],
+  },
+  {
+    id: "yui",
+    name: "Yui",
+    gender: "Female" as const,
+    avatar: "https://randomuser.me/api/portraits/women/69.jpg",
+    age: "Young Adult",
+    language: "Japanese",
+    tags: ["Narration", "Energetic"],
+  },
+  {
+    id: "hiroshi",
+    name: "Hiroshi",
+    gender: "Male" as const,
+    avatar: "https://randomuser.me/api/portraits/men/35.jpg",
+    age: "Adult",
+    language: "Japanese",
+    tags: ["Professional", "Calm"],
+  },
 ];
 
 const loudnessOptions = [
@@ -53,7 +184,7 @@ const loudnessOptions = [
 export default function TextToAudioPage() {
   const [text, setText] = useState("");
   const [lang, setLang] = useState<"en" | "jp">("en");
-  const [voice, setVoice] = useState("en1");
+  const [voice, setVoice] = useState("amelia");
   const [expressive, setExpressive] = useState("medium");
   const [startSilence, setStartSilence] = useState([0]);
   const [sentenceSilence, setSentenceSilence] = useState([0]);
@@ -62,10 +193,10 @@ export default function TextToAudioPage() {
   const [loudness, setLoudness] = useState("moderate");
   const [loading, setLoading] = useState(false);
   const [canPlay, setCanPlay] = useState(false);
-  const [voiceDialogOpen, setVoiceDialogOpen] = useState(false);
+  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
 
   const voices = useMemo(() => (lang === "en" ? EN_VOICES : JP_VOICES), [lang]);
-  const selectedVoice = voices.find(v => v.id === voice);
+  const selectedVoice = voices.find(v => v.id === voice) || voices[0];
 
   const charCount = text.length;
 
@@ -116,70 +247,41 @@ export default function TextToAudioPage() {
               </SelectContent>
             </Select>
           </div>
-          {/* 声音选择（弹窗卡片） */}
+          {/* 声音选择 */}
           <div className="mb-4">
             <label className="block font-semibold mb-1">声音</label>
             <Button
               variant="outline"
-              className="w-full flex justify-between items-center"
-              onClick={() => setVoiceDialogOpen(true)}
+              className="w-full flex items-center justify-start gap-3"
+              onClick={() => setVoiceModalOpen(true)}
             >
-              <div className="flex items-center">
-                {selectedVoice?.gender === "Male" ? (
-                  <User className="w-5 h-5 mr-2 text-blue-500" />
-                ) : (
-                  <User2 className="w-5 h-5 mr-2 text-pink-500" />
-                )}
-                <span>{selectedVoice?.name}</span>
-                <span className="ml-2 text-xs text-gray-400">{selectedVoice?.gender === "Male" ? "男" : "女"}</span>
-              </div>
-              <span className="text-xs text-gray-400">点击选择</span>
+              <img
+                src={selectedVoice.avatar}
+                alt={selectedVoice.name}
+                className="w-8 h-8 rounded-full object-cover border"
+                onError={e => ((e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(selectedVoice.name))}
+              />
+              <span className="font-medium">{selectedVoice.name}</span>
+              {selectedVoice.gender === "Male" ? (
+                <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <circle cx="13" cy="13" r="5" />
+                  <path d="M19 5v4m0-4h-4m4 0l-7 7" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <circle cx="12" cy="8" r="5" />
+                  <path d="M12 13v6m-3 0h6" />
+                </svg>
+              )}
+              <span className="ml-2 text-xs text-gray-500">{selectedVoice.language} • {selectedVoice.age}</span>
             </Button>
-            <Dialog open={voiceDialogOpen} onOpenChange={setVoiceDialogOpen}>
-              <DialogContent className="max-w-3xl">
-                <DialogHeader>
-                  <DialogTitle>选择声音</DialogTitle>
-                </DialogHeader>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
-                  {voices.map(v => (
-                    <button
-                      key={v.id}
-                      className={cn(
-                        "group relative rounded-xl border p-4 flex flex-col items-center transition focus:outline-none",
-                        voice === v.id
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50"
-                      )}
-                      onClick={() => {
-                        setVoice(v.id);
-                        setVoiceDialogOpen(false);
-                      }}
-                      type="button"
-                    >
-                      <div className="mb-2">
-                        {v.gender === "Male" ? (
-                          <User className="w-8 h-8 text-blue-500" />
-                        ) : (
-                          <User2 className="w-8 h-8 text-pink-500" />
-                        )}
-                      </div>
-                      <div className="font-semibold">{v.name}</div>
-                      <div className="text-xs text-gray-500 mt-1">{v.gender === "Male" ? "男" : "女"}</div>
-                      {voice === v.id && (
-                        <span className="absolute top-2 right-2 text-blue-500">
-                          <Check className="w-5 h-5" />
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-                <DialogClose asChild>
-                  <Button className="mt-6 w-full" variant="secondary">
-                    关闭
-                  </Button>
-                </DialogClose>
-              </DialogContent>
-            </Dialog>
+            <VoiceSelectModal
+              open={voiceModalOpen}
+              onOpenChange={setVoiceModalOpen}
+              voices={voices}
+              value={voice}
+              onChange={id => setVoice(id)}
+            />
           </div>
           {/* 表现力 */}
           <div className="mb-4">
