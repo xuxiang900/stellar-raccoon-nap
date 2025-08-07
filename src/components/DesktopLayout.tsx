@@ -22,15 +22,15 @@ export default function DesktopLayout({ children }: DesktopLayoutProps) {
           <span className="w-3 h-3 rounded-full bg-yellow-400 border border-yellow-200"></span>
           <span className="w-3 h-3 rounded-full bg-green-500 border border-green-300"></span>
         </div>
-        {/* logo+名称+版本号 */}
-        <div className="flex flex-col items-center mb-12 mt-8 w-full">
-          <div className="flex items-center justify-center w-full mb-1">
+        {/* logo+名称+版本号 左对齐 */}
+        <div className="flex flex-col items-start mb-12 mt-8 w-full px-8">
+          <div className="flex items-center mb-1">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mr-3">
               <span className="text-white text-2xl font-bold">🍏</span>
             </div>
-            <span className="text-lg font-semibold text-gray-800">BookFab</span>
+            <span className="text-lg font-semibold text-gray-800">{'BookFab'}</span>
           </div>
-          <span className="text-xs text-gray-400">v1.0.0.0</span>
+          <span className="text-xs text-gray-400 ml-15">{'v1.0.0.0'}</span>
         </div>
         {/* 主菜单 */}
         <nav className="flex-1 w-full">
