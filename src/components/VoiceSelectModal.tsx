@@ -50,14 +50,15 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl w-full p-0">
         <div className="flex flex-col h-[600px]">
-          <DialogHeader className="p-6 border-b">
-            <DialogTitle>Select Voice</DialogTitle>
+          {/* 优化后的Header */}
+          <div className="flex items-center justify-between p-6 border-b relative">
+            <DialogTitle className="text-lg font-semibold">Select Voice</DialogTitle>
             <DialogClose asChild>
-              <Button variant="ghost" size="icon" className="absolute right-4 top-4">
+              <Button variant="ghost" size="icon" className="ml-2">
                 <X className="w-5 h-5" />
               </Button>
             </DialogClose>
-          </DialogHeader>
+          </div>
           <div className="flex flex-1 overflow-hidden">
             {/* 左侧筛选栏 */}
             <div className="w-64 border-r p-6 flex flex-col gap-4 bg-gray-50">
@@ -92,7 +93,7 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
                         onError={e => ((e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(v.name))}
                       />
                       <div>
-                        <div className="font-semibold text-lg">
+                        <div className="font-semibold text-lg flex items-center">
                           {v.name}
                           {genderIcon(v.gender)}
                         </div>
@@ -120,11 +121,8 @@ export function VoiceSelectModal({ open, onOpenChange, voices, value, onChange }
               )}
             </div>
           </div>
-          {/* 底部操作栏 */}
+          {/* 只保留OK按钮 */}
           <div className="flex justify-end gap-4 border-t p-6 bg-white">
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
             <DialogClose asChild>
               <Button onClick={() => onOpenChange(false)}>OK</Button>
             </DialogClose>
